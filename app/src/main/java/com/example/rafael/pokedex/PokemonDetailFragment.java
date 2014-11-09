@@ -8,17 +8,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class PokemonDetailFragment extends Fragment {
 
-    private static final String ARG_NOMBRE = "nombre";
-    private String mNombre;
+    private static final String ARG_NOMBRE = "pokemon";
+    private Pokemon mPokemon;
 
-    public static PokemonDetailFragment newInstance(String mNombre) {
+    public static PokemonDetailFragment newInstance(Pokemon pokemon) {
         PokemonDetailFragment fragment = new PokemonDetailFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_NOMBRE, mNombre);
+        args.putParcelable(ARG_NOMBRE, pokemon);
         fragment.setArguments(args);
         return fragment;
     }
@@ -30,7 +33,7 @@ public class PokemonDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mNombre = getArguments().getString(ARG_NOMBRE);
+            mPokemon = getArguments().getParcelable(ARG_NOMBRE);
         }
     }
 
@@ -40,11 +43,18 @@ public class PokemonDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_pokemon_detail,
                 container, false);
 
-        TextView nombre = (TextView)rootView.findViewById(R.id.textview_pokemon_nombre);
-        nombre.setText(mNombre);
+        TextView nameView = (TextView)rootView.findViewById(R.id.textview_pokemon_nombre);
+        ImageView imageView = (ImageView)rootView.findViewById(R.id.detail_pokemon_imageview);
+
+        nameView.setText("Name: " + mPokemon.getNombre());
+
+        Picasso.with(getActivity())
+                .load(mPokemon.getAvatar())
+                .placeholder(R.drawable.pokeball)
+                .error(R.drawable.pokeball)
+                .into(imageView);
 
         return rootView;
     }
-
 
 }

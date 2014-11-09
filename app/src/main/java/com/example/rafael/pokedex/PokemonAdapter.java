@@ -39,7 +39,7 @@ public class PokemonAdapter extends ArrayAdapter<Pokemon> {
         }
         ViewHolder holder = (ViewHolder) view.getTag();
         Pokemon p = (Pokemon)getItem(i);
-        holder.textView.setText(p.getName());
+        holder.textView.setText(p.getNombre());
 
         //Picasso.with(context).load(p.getUrlImg()).into(holder.imageView);
         if ((p.getAvatar() == null) || p.getAvatar().isEmpty()) {
