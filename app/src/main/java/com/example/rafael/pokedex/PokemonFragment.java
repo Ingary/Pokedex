@@ -3,6 +3,7 @@ package com.example.rafael.pokedex;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +38,8 @@ public class PokemonFragment extends Fragment {
     private ListView listView;
     private Callbacks mCallbacks = sDummyCallbacks;
 
+    private static final String STATE_ACTIVATED_POSITION = "activated_position";
+
     public interface Callbacks {
         /**
          * Callback for when an item has been selected.
@@ -52,6 +55,16 @@ public class PokemonFragment extends Fragment {
     };
 
     public PokemonFragment() {
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (savedInstanceState != null
+                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+            setActivatedPosition(savedInstanceState
+                    .getInt(STATE_ACTIVATED_POSITION));
+        }
     }
 
     @Override
@@ -98,6 +111,20 @@ public class PokemonFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void setActivateOnItemClick(boolean activateOnItemClick) {
+        listView.setChoiceMode(
+                activateOnItemClick ? ListView.CHOICE_MODE_SINGLE
+                        : ListView.CHOICE_MODE_NONE);
+    }
+
+    public void setActivatedPosition(int position) {
+        if (position == ListView.INVALID_POSITION) {
+            listView.setItemChecked(0, false);
+        } else {
+            listView.setItemChecked(position, true);
+        }
     }
 
     public void runTask(){

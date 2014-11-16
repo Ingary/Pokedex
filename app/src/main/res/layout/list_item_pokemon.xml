@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#E9E9E9"
+    android:background="@drawable/fragment_listselector"
     android:layout_gravity="center_vertical"
     android:gravity="center_vertical">
 

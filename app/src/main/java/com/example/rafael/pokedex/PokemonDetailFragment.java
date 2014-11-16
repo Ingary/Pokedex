@@ -46,13 +46,23 @@ public class PokemonDetailFragment extends Fragment {
         TextView nameView = (TextView)rootView.findViewById(R.id.textview_pokemon_nombre);
         ImageView imageView = (ImageView)rootView.findViewById(R.id.detail_pokemon_imageview);
 
-        nameView.setText("Name: " + mPokemon.getNombre());
+        if (mPokemon != null) {
+            nameView.setText("Name: " + mPokemon.getNombre());
 
-        Picasso.with(getActivity())
-                .load(mPokemon.getAvatar())
-                .placeholder(R.drawable.pokeball)
-                .error(R.drawable.pokeball)
-                .into(imageView);
+            if (!mPokemon.getAvatar().isEmpty()){
+                Picasso.with(getActivity())
+                        .load(mPokemon.getAvatar())
+                        .placeholder(R.drawable.pokeball)
+                        .error(R.drawable.pokeball)
+                        .into(imageView);
+            }else{
+                Picasso.with(getActivity())
+                        .load(R.drawable.pokeball)
+                        .placeholder(R.drawable.pokeball)
+                        .error(R.drawable.pokeball)
+                        .into(imageView);
+            }
+        }
 
         return rootView;
     }

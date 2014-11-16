@@ -30,16 +30,26 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity implements
         PokemonFragment.Callbacks{
 
+    private boolean mTwoPane;
+    private Pokemon mCurrentPokemon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PokemonFragment())
-                    .commit();
+
+        if (findViewById(R.id.pokemon_detail_container) != null){
+            ((PokemonFragment) getSupportFragmentManager().findFragmentById(R.id.container)).setActivateOnItemClick(true);
+            mTwoPane = true;
         }
 
+        if (savedInstanceState == null && mTwoPane) {
+            PokemonDetailFragment fragment = PokemonDetailFragment.newInstance(null);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.pokemon_detail_container, fragment).commit();
+
+        }
     }
 
     @Override
@@ -63,9 +73,18 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onItemSelected(Pokemon pokemon) {
-        Intent detailIntent = new Intent(this, PokemonDetailActivity.class);
-        detailIntent.putExtra("pokemon", pokemon);
-        startActivity(detailIntent);
+        mCurrentPokemon = pokemon;
+
+        if (mTwoPane) {
+            PokemonDetailFragment fragment = PokemonDetailFragment.newInstance(mCurrentPokemon);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.pokemon_detail_container, fragment).commit();
+
+        }else {
+            Intent detailIntent = new Intent(this, PokemonDetailActivity.class);
+            detailIntent.putExtra("pokemon", pokemon);
+            startActivity(detailIntent);
+        }
     }
 
 }
