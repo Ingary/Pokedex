@@ -1,6 +1,7 @@
 package com.example.rafael.pokedex;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class PokemonAdapter extends ArrayAdapter<Pokemon> {
             viewHolder.imageView = (ImageView) view.findViewById(R.id.list_item_pokemon_imageview);
             view.setTag(viewHolder);
         }
-        ViewHolder holder = (ViewHolder) view.getTag();
+        final ViewHolder holder = (ViewHolder) view.getTag();
         Pokemon p = (Pokemon)getItem(i);
         holder.textView.setText(p.getNombre());
 
@@ -45,11 +47,31 @@ public class PokemonAdapter extends ArrayAdapter<Pokemon> {
         if ((p.getAvatar() == null) || p.getAvatar().isEmpty()) {
             holder.imageView.setImageResource(R.drawable.pokeball);
         } else{
-            Picasso.with(context)
+            /*Picasso.with(context)
                     .load(p.getAvatar())
                     .placeholder(R.drawable.pokeball)
                     .error(R.drawable.pokeball)
-                    .into(holder.imageView);
+                    .into(holder.imageView);*/
+
+            //ImageLoader from Volley Library
+            ImageLoader imageLoader = PokedexApplication.getInstance().getImageLoader();
+
+            // If you are using normal ImageView
+            imageLoader.get(p.getAvatar(), new ImageLoader.ImageListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("ERROR", "Image Load Error: " + error.getMessage());
+                }
+
+                @Override
+                public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                    if (response.getBitmap() != null) {
+                        // load image into imageview
+                        holder.imageView.setImageBitmap(response.getBitmap());
+                    }
+                }
+            });
         }
 
         return view;
