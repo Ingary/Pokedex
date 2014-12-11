@@ -2,6 +2,7 @@ package com.example.rafael.pokedex;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,10 +13,10 @@ import org.json.JSONObject;
 public class Pokemon implements Parcelable {
     private String nombre;
     private String avatar;
-    private Integer pokemon_id;
+    private int id;
 
     public Pokemon(JSONObject p) throws JSONException {
-        this.pokemon_id = p.getInt("id");
+        this.id = p.getInt("id");
         this.nombre = p.getString("nombre");
         this.avatar = p.getString("avatar");
     }
@@ -26,14 +27,13 @@ public class Pokemon implements Parcelable {
      * @param in a parcel to read this object
      */
     public Pokemon(Parcel in) {
+        this.id = in.readInt();
         this.nombre = in.readString();
         this.avatar = in.readString();
     }
 
 
-    public Integer getPokemonId() {
-        return pokemon_id;
-    }
+    public Integer getPokemonId() { return id;}
 
     public String getNombre() {
         return nombre;
@@ -68,6 +68,7 @@ public class Pokemon implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
         parcel.writeString(nombre);
         parcel.writeString(avatar);
     }

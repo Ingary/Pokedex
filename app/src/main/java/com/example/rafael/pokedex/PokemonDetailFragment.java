@@ -24,7 +24,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -192,9 +194,9 @@ public class PokemonDetailFragment extends Fragment {
             String tag_json_obj = "json_obj_req";
 
             final String endpointLocation = "https://mi-pokedex.herokuapp.com/api/v1/pokemons";
-            final int pokemon_id = 7;
-            final String latitude = "17.89";
-            final String longitude = "-22.36";
+            final int pokemon_id = mPokemon.getPokemonId();
+            final String latitude = "1.89";
+            final String longitude = "-2.36";
 
 
             Uri builtUri = Uri.parse(endpointLocation).buildUpon()
@@ -208,8 +210,12 @@ public class PokemonDetailFragment extends Fragment {
             mProgressDialog.setMessage("Loading...");
             mProgressDialog.show();
 
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("lat", latitude);
+            params.put("lon", longitude);
+
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                    url, null,
+                    url, new JSONObject(params),
                     new Response.Listener<JSONObject>() {
 
                         @Override
@@ -223,8 +229,13 @@ public class PokemonDetailFragment extends Fragment {
                 public void onErrorResponse(VolleyError error) {
                     VolleyLog.d("RESPONSE ERROR::", "Error: " + error.getMessage());
                     mProgressDialog.hide();
+                    Toast.makeText(getActivity().getApplicationContext(),
+                                   "422: Already registered location.",
+                                   Toast.LENGTH_LONG).show();
                 }
-            }) {
+            })
+
+            /*{
 
                 @Override
                 protected Map<String, String> getParams() {
@@ -235,8 +246,16 @@ public class PokemonDetailFragment extends Fragment {
                     return params;
                 }
 
-            };
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
 
+                    return headers;
+                }
+            }*/;
+
+            Log.d("JSON OBJECT TO API XXX::", jsonObjReq.toString());
             // Adding request to request queue
             PokedexApplication.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
         }
