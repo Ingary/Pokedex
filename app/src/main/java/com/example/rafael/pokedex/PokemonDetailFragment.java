@@ -222,6 +222,9 @@ public class PokemonDetailFragment extends Fragment {
                         public void onResponse(JSONObject response) {
                             Log.d("RESPONSE FROM API::", response.toString());
                             mProgressDialog.hide();
+                            Toast.makeText(getActivity().getApplicationContext(),
+                                    "Location has successfully been added.",
+                                    Toast.LENGTH_LONG).show();
                         }
                     }, new Response.ErrorListener() {
 
@@ -255,7 +258,6 @@ public class PokemonDetailFragment extends Fragment {
                 }
             }*/;
 
-            Log.d("JSON OBJECT TO API XXX::", jsonObjReq.toString());
             // Adding request to request queue
             PokedexApplication.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
         }
