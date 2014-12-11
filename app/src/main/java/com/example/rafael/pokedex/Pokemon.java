@@ -12,8 +12,10 @@ import org.json.JSONObject;
 public class Pokemon implements Parcelable {
     private String nombre;
     private String avatar;
+    private Integer pokemon_id;
 
     public Pokemon(JSONObject p) throws JSONException {
+        this.pokemon_id = p.getInt("id");
         this.nombre = p.getString("nombre");
         this.avatar = p.getString("avatar");
     }
@@ -29,6 +31,9 @@ public class Pokemon implements Parcelable {
     }
 
 
+    public Integer getPokemonId() {
+        return pokemon_id;
+    }
 
     public String getNombre() {
         return nombre;

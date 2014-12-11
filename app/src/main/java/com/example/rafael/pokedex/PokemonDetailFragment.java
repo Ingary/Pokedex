@@ -4,6 +4,7 @@ package com.example.rafael.pokedex;
  * Created by rafael on 10/31/14.
  */
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -20,12 +21,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PokemonDetailFragment extends Fragment {
 
@@ -34,6 +45,8 @@ public class PokemonDetailFragment extends Fragment {
     private ShareActionProvider mShareActionProvider;
     private Bitmap mBitmap;
     private String urlImage;
+    private ProgressDialog mProgressDialog;
+    private String mLocation;
 
     public static PokemonDetailFragment newInstance(Pokemon pokemon) {
         PokemonDetailFragment fragment = new PokemonDetailFragment();
@@ -103,6 +116,13 @@ public class PokemonDetailFragment extends Fragment {
             }
         }
 
+        final Button button = (Button) rootView.findViewById(R.id.saw_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                runTask();
+            }
+        });
+
         return rootView;
     }
 
@@ -149,9 +169,77 @@ public class PokemonDetailFragment extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlImage));
                 startActivity(intent);
             }
+        }else if(id == R.id.action_map){
+            showMap();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showMap() {
+        Uri geoLocation = Uri.parse("geo:47.6,-122.3");
+        //.buildUpon().appendQueryParameter("q", location).build();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geoLocation);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    public void runTask(){
+        if (mPokemon != null) {
+            // Tag used to cancel the request
+            String tag_json_obj = "json_obj_req";
+
+            final String endpointLocation = "https://mi-pokedex.herokuapp.com/api/v1/pokemons";
+            final int pokemon_id = 7;
+            final String latitude = "17.89";
+            final String longitude = "-22.36";
+
+
+            Uri builtUri = Uri.parse(endpointLocation).buildUpon()
+                    .appendPath(Integer.toString(pokemon_id))
+                    .appendPath("lugar")
+                    .build();
+
+            String url = builtUri.toString();
+
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.show();
+
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                    url, null,
+                    new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("RESPONSE FROM API::", response.toString());
+                            mProgressDialog.hide();
+                        }
+                    }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.d("RESPONSE ERROR::", "Error: " + error.getMessage());
+                    mProgressDialog.hide();
+                }
+            }) {
+
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("lat", latitude);
+                    params.put("lon", longitude);
+
+                    return params;
+                }
+
+            };
+
+            // Adding request to request queue
+            PokedexApplication.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+        }
     }
 
 }
