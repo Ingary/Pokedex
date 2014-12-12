@@ -224,7 +224,7 @@ public class PokemonDetailFragment extends Fragment {
                             mProgressDialog.hide();
                             Toast.makeText(getActivity().getApplicationContext(),
                                     "Location has successfully been added.",
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }, new Response.ErrorListener() {
 
@@ -233,8 +233,8 @@ public class PokemonDetailFragment extends Fragment {
                     VolleyLog.d("RESPONSE ERROR::", "Error: " + error.getMessage());
                     mProgressDialog.hide();
                     Toast.makeText(getActivity().getApplicationContext(),
-                                   "422: Already registered location.",
-                                   Toast.LENGTH_LONG).show();
+                                   "Already registered location.",
+                                   Toast.LENGTH_SHORT).show();
                 }
             })
 
